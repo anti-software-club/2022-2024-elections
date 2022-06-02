@@ -1,0 +1,41 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+library(dplyr)
+library(glmnet)
+
+pres_train_X <- read.csv("project_pres_train_X.csv")
+pres_train_y <- read.csv("project_pres_train_y.csv")
+pres_test_X <- read.csv("project_pres_test_X.csv")
+pres_test_y <- read.csv("project_pres_test_y.csv")
+
+sen_train_X <- read.csv("project_sen_train_X.csv")
+sen_train_y <- read.csv("project_sen_train_y.csv")
+sen_test_X <- read.csv("project_sen_test_X.csv")
+
+pres_train_X <- scale(select(pres_train_X, -X))
+pres_train_y <- select(pres_train_y, -X)
+pres_test_X <- scale(select(pres_test_X, -X))
+pres_test_y <- select(pres_test_y, -X)
+sen_train_X <- scale(select(sen_train_X, -X))
+sen_train_y <- select(sen_train_y, -X)
+sen_test_X <- scale(select(sen_test_X, -X))
+
+pres_log <- glm(pres_train_y$pres2016 ~ pres_train_X - 1, family="binomial")
+summary(pres_log)
+pres_lasso <- glmnet(pres_train_X, pres_train_y$pres2016, family="binomial", intercept = F, alpha = 1)
+summary(pres_lasso)
+pres_ridge <- glmnet(pres_train_X, pres_train_y$pres2016, family="binomial", intercept = F, alpha = 0)
+summary(pres_ridge)
+
+sen_log <- glm(sen_train_y$recent.res ~ sen_train_X - 1, family="binomial")
+summary(sen_log)
+sen_lasso <- glmnet(sen_train_X, sen_train_y$recent.res, family="binomial", intercept = F, alpha = 1)
+summary(sen_lasso)
+sen_ridge <- glmnet(sen_train_X, sen_train_y$recent.res, family="binomial", intercept = F, alpha = 0)
+summary(sen_ridge)
+
+```
